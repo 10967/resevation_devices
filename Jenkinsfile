@@ -26,7 +26,7 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        git branch: 'main', url: 'https://github.com/zinebmouman/resevation_devices.git'
+        checkout scm
       }
     }
 
