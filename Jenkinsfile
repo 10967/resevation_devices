@@ -57,7 +57,7 @@ pipeline {
         }
       }
     }
-//Test webhook auto trigger1
+//Test webhook auto trigger3
     stage('Build & Push to ACR') {
       // Si tu veux cibler un autre nœud uniquement pour ce stage :
       // agent { label 'docker-windows' }
