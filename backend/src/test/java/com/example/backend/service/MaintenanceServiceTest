@@ -1,0 +1,114 @@
+package com.example.backend.service;
+
+import com.example.backend.dto.MaintenanceDto;
+import com.example.backend.entity.Device;
+import com.example.backend.entity.Maintenance;
+import com.example.backend.repository.DeviceRepository;
+import com.example.backend.repository.MaintenanceRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class MaintenanceServiceTest {
+
+    @InjectMocks
+    private MaintenanceService maintenanceService;
+
+    @Mock
+    private MaintenanceRepository maintenanceRepository;
+
+    @Mock
+    private DeviceRepository deviceRepository;
+
+    private Device device;
+    private Maintenance maintenance;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        device = new Device();
+        device.setId(1L);
+
+        maintenance = new Maintenance("desc", LocalDateTime.now(), device);
+        maintenance.setId(1L);
+    }
+
+    @Test
+    void getAllMaintenances_shouldReturnList() {
+        when(maintenanceRepository.findAll()).thenReturn(List.of(maintenance));
+
+        List<MaintenanceDto> result = maintenanceService.getAllMaintenances();
+
+        assertEquals(1, result.size());
+        verify(maintenanceRepository).findAll();
+    }
+
+    @Test
+    void getMaintenanceById_shouldReturnDto() {
+        when(maintenanceRepository.findById(1L)).thenReturn(Optional.of(maintenance));
+
+        MaintenanceDto result = maintenanceService.getMaintenanceById(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    void createMaintenance_shouldSave() {
+        MaintenanceDto dto = new MaintenanceDto();
+        dto.setDeviceId(1L);
+        dto.setDescription("desc");
+        dto.setMaintenanceDate(LocalDateTime.now());
+
+        when(deviceRepository.findById(1L)).thenReturn(Optional.of(device));
+        when(maintenanceRepository.existsByDeviceIdAndMaintenanceDate(1L, dto.getMaintenanceDate())).thenReturn(false);
+        when(maintenanceRepository.save(any())).thenReturn(maintenance);
+
+        MaintenanceDto result = maintenanceService.createMaintenance(dto);
+
+        assertNotNull(result);
+        verify(maintenanceRepository).save(any());
+    }
+
+    @Test
+    void createMaintenance_duplicate_shouldThrow() {
+        MaintenanceDto dto = new MaintenanceDto();
+        dto.setDeviceId(1L);
+        dto.setMaintenanceDate(LocalDateTime.now());
+
+        when(maintenanceRepository.existsByDeviceIdAndMaintenanceDate(1L, dto.getMaintenanceDate())).thenReturn(true);
+
+        assertThrows(RuntimeException.class, () -> maintenanceService.createMaintenance(dto));
+    }
+
+    @Test
+    void updateMaintenance_shouldUpdate() {
+        MaintenanceDto dto = new MaintenanceDto();
+        dto.setDeviceId(1L);
+        dto.setDescription("updated");
+        dto.setMaintenanceDate(LocalDateTime.now());
+
+        when(maintenanceRepository.findById(1L)).thenReturn(Optional.of(maintenance));
+        when(deviceRepository.findById(1L)).thenReturn(Optional.of(device));
+        when(maintenanceRepository.save(any())).thenReturn(maintenance);
+
+        MaintenanceDto result = maintenanceService.updateMaintenance(1L, dto);
+
+        assertNotNull(result);
+        verify(maintenanceRepository).save(any());
+    }
+
+    @Test
+    void deleteMaintenance_shouldCallRepository() {
+        maintenanceService.deleteMaintenance(1L);
+        verify(maintenanceRepository).deleteById(1L);
+    }
+}
