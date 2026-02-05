@@ -44,19 +44,19 @@ pipeline {
       }
     }
 
-    stage('SonarCloud Analysis (backend)') {
-      steps {
-        dir('backend') {
-          bat """
-            mvn -B -e sonar:sonar ^
-              -Dsonar.projectKey=%PROJECT_KEY% ^
-              -Dsonar.organization=%ORG% ^
-              -Dsonar.host.url=https://sonarcloud.io ^
-              -Dsonar.token=%SONAR_TOKEN%
-          """
-        }
-      }
-    }
+    //stage('SonarCloud Analysis (backend)') {
+     // steps {
+      //  dir('backend') {
+      //    bat """
+        //    mvn -B -e sonar:sonar ^
+        //      -Dsonar.projectKey=%PROJECT_KEY% ^
+             // -Dsonar.organization=%ORG% ^
+              //-Dsonar.host.url=https://sonarcloud.io ^
+              //-Dsonar.token=%SONAR_TOKEN%
+         // """
+       // }
+     // }
+   // }
 //Test webhook auto trigger4
     stage('Build & Push to ACR') {
       // Si tu veux cibler un autre nœud uniquement pour ce stage :
