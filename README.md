@@ -1,0 +1,1 @@
+Test pipeline auto-trigger
