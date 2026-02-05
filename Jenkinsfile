@@ -9,6 +9,10 @@ pipeline {
 
   environment {
     MAVEN_OPTS = '-Xmx1024m'
+    // SonarCloud configuration
+    SONAR_TOKEN = credentials('sonar-token')       // ID du credential Jenkins
+    ORG = '10967'           // Remplace par ton org SonarCloud
+    PROJECT_KEY = 'resevation_devices'               // Remplace par ton project key
   }
 
   stages {
@@ -33,6 +37,20 @@ pipeline {
       }
     }
 
+    stage('SonarCloud Analysis') {
+      steps {
+        dir('backend') {
+          bat """
+            mvn sonar:sonar ^
+            -Dsonar.projectKey=%PROJECT_KEY% ^
+            -Dsonar.organization=%ORG% ^
+            -Dsonar.host.url=https://sonarcloud.io ^
+            -Dsonar.login=%SONAR_TOKEN%
+          """
+        }
+      }
+    }
+
   }
 
   post {
@@ -43,4 +61,5 @@ pipeline {
       echo 'Pipeline KO'
     }
   }
+
 }
