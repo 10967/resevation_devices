@@ -12,7 +12,7 @@ pipeline {
     // SonarCloud configuration
     SONAR_TOKEN = credentials('sonar-token')       // ID du credential Jenkins
     ORG = '10967'           // Remplace par ton org SonarCloud
-    PROJECT_KEY = 'resevation_devices'               // Remplace par ton project key
+    PROJECT_KEY = '10967_resevation_devices'               // Remplace par ton project key
   }
 
   stages {
