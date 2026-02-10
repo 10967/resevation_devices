@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devices-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devices-backend
+  template:
+    metadata:
+      labels:
+        app: devices-backend
+    spec:
+      containers:
+        - name: devices-backend
+          image: malak000/resevation_devices-backend:1.0
+          ports:
+            - containerPort: 8080
